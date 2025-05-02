@@ -71,16 +71,16 @@
 <div class="container mt-3">
 <form action="https://formspree.io/f/xdkgezbv" method="POST">  
   <div class="mb-3 mt-3">
-  Name: <input type="text" class="form-control" name="name" value="<?php echo $name;?>"><span class="text-danger">*</span>
+  Name: <input type="text" class="form-control" name="name"><span class="text-danger">*</span>
   </div>
   <div class="mb-3 mt-3">
-  E-mail: <input type="email" class="form-control" name="email" value="<?php echo $email;?>"><span class="text-danger">*</span>
+  E-mail: <input type="email" class="form-control" name="email"><span class="text-danger">*</span>
   </div>
  
    
  <div class="mb-3 mt-3">
   Questions or Comments?:
-  <textarea class="form-control" name="comment" rows="5" cols="40"><?php echo $comment;?></textarea><span class="text-danger">*</span>
+  <textarea class="form-control" name="comment" rows="5" cols="40"></textarea><span class="text-danger">*</span>
   </div>
       <button type="submit" name="send" class="btn btn-success">Send Message</button>
   
