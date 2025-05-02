@@ -1,3 +1,54 @@
+<?php
+$badmess = $nameErr = $emailErr = $comErr = Null;
+$mess = $name = $premail = $email = $comment = Null;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["name"])) {
+    $nameErr = "Name is required";
+  } else {
+    $name = test_input($_POST["name"]);
+    }
+  
+  if (empty($_POST["email"])) {
+    $emailErr = "Email is required";
+  } else {
+    $premail = test_input($_POST["email"]);
+      if (!filter_var($premail, FILTER_VALIDATE_EMAIL)) {
+        $emailErr = "Invalid email format";
+      } else {
+        $email = $premail;
+      }
+}
+  if (!empty($nameErr || $emailErr)) {
+  $badmess = "Please review errors";
+  } else {
+    $mess = "Thank you ".$name ." for your submission!";
+    }
+
+  if (empty($_POST["comment"])) {
+    $comErr = "Message is required. A simple hello will do :)";
+  } else {
+    $comment = test_input($_POST["comment"]);
+  }
+
+  if (!empty($mess)) {
+  $mailTo = "findme@enigment.com";
+  $headers = "From: ".$email;
+  $subj = "Message from ".$name ." sent from Enigment.";
+  $txt = "You have a message from ".$name .".\n\n".$comment;
+  $txt = str_replace("\n.", "\n..", $txt);
+
+  mail($mailTo, $subj, $txt, $headers);
+    }
+}
+
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,13 +76,13 @@
           <a class="nav-link" href="index.html">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="newclient.html">New Client</a>
+          <a class="nav-link" href="newclient.html">New Client</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="resources.html">Resources</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="contact.html">Contact</a>
+          <a class="nav-link active" aria-current="page" href="contact.html">Contact</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="about.html">About</a>
@@ -59,16 +110,45 @@
   </div>
 
   <div class="row">
-    <h2 class="mt-5 mb-2 border-bottom border-success">New Client Inquiry Form</h2>
+    <h2 class="mt-5 mb-2 border-bottom border-success">Connect with us!</h2>
   </div>
 
   <div class="row">
-    <div class="col ratio ratio-16x9">
-        <iframe src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAMAACGov1tURFlJVlk0MTRWTDZaQVA3U05PUTU2ME5HRi4u&embed=true" marginwidth="0" marginheight="0" style="border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
+    <div class="col">
+        
     </div>
   </div>
 </div>
+<div class="container mt-3">
 
+<?php
+if (!empty($mess)) {
+echo "<h2 class='text-success'>$mess</h2>";
+}
+?>
+
+<h2 class="text-danger"><?php echo $badmess;?></h2>
+ <p class="text-danger"> <?php echo $nameErr;?></p>
+ <p class="text-danger"><?php echo $emailErr;?></p>
+ <p class="text-danger"><?php echo $comErr;?></p>
+
+
+<form action="https://formspree.io/f/xdkgezbv" method="POST">  
+  <div class="mb-3 mt-3">
+  Name: <input type="text" class="form-control" name="name" value="<?php echo $name;?>"><span class="text-danger">*</span>
+  </div>
+  <div class="mb-3 mt-3">
+  E-mail: <input type="email" class="form-control" name="email" value="<?php echo $email;?>"><span class="text-danger">*</span>
+  </div>
+ 
+   
+ <div class="mb-3 mt-3">
+  Questions or Comments?:
+  <textarea class="form-control" name="comment" rows="5" cols="40"><?php echo $comment;?></textarea><span class="text-danger">*</span>
+  </div>
+      <button type="submit" name="send" class="btn btn-success">Send Message</button>
+  
+</form>
   
 <!-- Footer -->
 <div class="container-sm">
@@ -87,6 +167,7 @@
       <li class="nav-item"><a href="about.html" class="nav-link px-2 text-body-secondary">About</a></li>
     </ul>
   </footer>
+</div>
 </div>
 
 </body>
