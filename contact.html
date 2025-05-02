@@ -1,54 +1,3 @@
-<?php
-$badmess = $nameErr = $emailErr = $comErr = Null;
-$mess = $name = $premail = $email = $comment = Null;
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if (empty($_POST["name"])) {
-    $nameErr = "Name is required";
-  } else {
-    $name = test_input($_POST["name"]);
-    }
-  
-  if (empty($_POST["email"])) {
-    $emailErr = "Email is required";
-  } else {
-    $premail = test_input($_POST["email"]);
-      if (!filter_var($premail, FILTER_VALIDATE_EMAIL)) {
-        $emailErr = "Invalid email format";
-      } else {
-        $email = $premail;
-      }
-}
-  if (!empty($nameErr || $emailErr)) {
-  $badmess = "Please review errors";
-  } else {
-    $mess = "Thank you ".$name ." for your submission!";
-    }
-
-  if (empty($_POST["comment"])) {
-    $comErr = "Message is required. A simple hello will do :)";
-  } else {
-    $comment = test_input($_POST["comment"]);
-  }
-
-  if (!empty($mess)) {
-  $mailTo = "findme@enigment.com";
-  $headers = "From: ".$email;
-  $subj = "Message from ".$name ." sent from Enigment.";
-  $txt = "You have a message from ".$name .".\n\n".$comment;
-  $txt = str_replace("\n.", "\n..", $txt);
-
-  mail($mailTo, $subj, $txt, $headers);
-    }
-}
-
-function test_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
-}
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -120,19 +69,6 @@ function test_input($data) {
   </div>
 </div>
 <div class="container mt-3">
-
-<?php
-if (!empty($mess)) {
-echo "<h2 class='text-success'>$mess</h2>";
-}
-?>
-
-<h2 class="text-danger"><?php echo $badmess;?></h2>
- <p class="text-danger"> <?php echo $nameErr;?></p>
- <p class="text-danger"><?php echo $emailErr;?></p>
- <p class="text-danger"><?php echo $comErr;?></p>
-
-
 <form action="https://formspree.io/f/xdkgezbv" method="POST">  
   <div class="mb-3 mt-3">
   Name: <input type="text" class="form-control" name="name" value="<?php echo $name;?>"><span class="text-danger">*</span>
