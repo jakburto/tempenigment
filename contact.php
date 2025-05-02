@@ -1,0 +1,174 @@
+<?php
+$badmess = $nameErr = $emailErr = $comErr = Null;
+$mess = $name = $premail = $email = $comment = Null;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["name"])) {
+    $nameErr = "Name is required";
+  } else {
+    $name = test_input($_POST["name"]);
+    }
+  
+  if (empty($_POST["email"])) {
+    $emailErr = "Email is required";
+  } else {
+    $premail = test_input($_POST["email"]);
+      if (!filter_var($premail, FILTER_VALIDATE_EMAIL)) {
+        $emailErr = "Invalid email format";
+      } else {
+        $email = $premail;
+      }
+}
+  if (!empty($nameErr || $emailErr)) {
+  $badmess = "Please review errors";
+  } else {
+    $mess = "Thank you ".$name ." for your submission!";
+    }
+
+  if (empty($_POST["comment"])) {
+    $comErr = "Message is required. A simple hello will do :)";
+  } else {
+    $comment = test_input($_POST["comment"]);
+  }
+
+  if (!empty($mess)) {
+  $mailTo = "findme@enigment.com";
+  $headers = "From: ".$email;
+  $subj = "Message from ".$name ." sent from Enigment.";
+  $txt = "You have a message from ".$name .".\n\n".$comment;
+  $txt = str_replace("\n.", "\n..", $txt);
+
+  mail($mailTo, $subj, $txt, $headers);
+    }
+}
+
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www.w3schools.com/w3css/5/w3.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Enigmatic Enterprises Inc</title>
+    <style> body {background-color:palegreen;}</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-success bg-gradient navbar-dark fixed-top">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="index.html">Enigmatic Enterprises</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="newclient.html">New Client</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="resources.html">Resources</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="contact.php">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="about.html">About</a>
+        </li>
+      </ul>
+      <!-- Removed until search content available on site
+        <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>-->
+    </div>
+  </div>
+</nav>
+
+<!-- Header -->
+<div class="container-fluid text-center my-3">
+  <div class="row bg-success">
+    <div class="col" id="myHeader">
+      <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i> 
+      <div class="col">
+        <h1 class="w3-xxxlarge w3-animate-bottom text-success-emphasis">Welcome to ENIGMENT</h1>
+        <h2 class="w3-animate-left text-success-emphasis">...Of Your Imagination!</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2 class="mt-5 mb-2 border-bottom border-success">Connect with us!</h2>
+  </div>
+
+  <div class="row">
+    <div class="col">
+        
+    </div>
+  </div>
+</div>
+<div class="container mt-3">
+
+<?php
+if (!empty($mess)) {
+echo "<h2 class='text-success'>$mess</h2>";
+}
+?>
+
+<h2 class="text-danger"><?php echo $badmess;?></h2>
+ <p class="text-danger"> <?php echo $nameErr;?></p>
+ <p class="text-danger"><?php echo $emailErr;?></p>
+ <p class="text-danger"><?php echo $comErr;?></p>
+
+
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">  
+  <div class="mb-3 mt-3">
+  Name: <input type="text" class="form-control" name="name" value="<?php echo $name;?>"><span class="text-danger">*</span>
+  </div>
+  <div class="mb-3 mt-3">
+  E-mail: <input type="email" class="form-control" name="email" value="<?php echo $email;?>"><span class="text-danger">*</span>
+  </div>
+ 
+   
+ <div class="mb-3 mt-3">
+  Questions or Comments?:
+  <textarea class="form-control" name="comment" rows="5" cols="40"><?php echo $comment;?></textarea><span class="text-danger">*</span>
+  </div>
+      <button type="submit" name="send" class="btn btn-success">Send Message</button>
+  
+</form>
+  
+<!-- Footer -->
+<div class="container-sm">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top border-success">
+    <p class="col-sm-4 mb-0 text-body-secondary">© 2025 Enigmatic Enterprises Inc</p>
+
+    <a href="/" class="col-sm-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none" aria-label="Bootstrap">
+      <svg class="bi me-2" width="40" height="32" aria-hidden="true"><use xlink:href="#bootstrap"></use></svg>
+    </a>
+
+    <ul class="nav col-sm-4 justify-content-end text-body-secondary">
+      <li class="nav-item"><a href="index.html" class="nav-link px-2 text-body-secondary">Home</a></li>
+      <li class="nav-item"><a href="newclient.html" class="nav-link px-2 text-body-secondary">New Client</a></li>
+      <li class="nav-item"><a href="resources.html" class="nav-link px-2 text-body-secondary">Resources</a></li>
+      <li class="nav-item"><a href="contact.php" class="nav-link px-2 text-body-secondary">Contact</a></li>
+      <li class="nav-item"><a href="about.html" class="nav-link px-2 text-body-secondary">About</a></li>
+    </ul>
+  </footer>
+</div>
+</div>
+
+</body>
+</html>
